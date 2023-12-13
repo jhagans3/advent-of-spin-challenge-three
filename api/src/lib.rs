@@ -36,7 +36,9 @@ fn post_handler(req: Request, _params: Params) -> anyhow::Result<impl IntoRespon
     let c = characters.join(",");
     let o = objects.join(",");
 
-    let prompt = format!("Create a poem in {place} with characters {c} with things {o}");
+    let prompt = format!(
+        "Create a poem in {place} with characters {c} with things {o} in the style of Dr. Seuss"
+    );
     let inference_res = infer(Llama2Chat, &prompt)?;
 
     let response_body = serde_json::to_string(&StoryResponse {
