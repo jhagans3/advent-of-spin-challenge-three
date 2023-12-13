@@ -1,0 +1,20 @@
+spin_manifest_version = 2
+
+[application]
+name = "advent-of-spin-challenge-three"
+version = "0.1.0"
+authors = ["James Hagans <jhagans@acm.org>"]
+description = "advent of spin week 3 challenge"
+
+[[trigger.http]]
+route = "/..."
+component = "api"
+
+[component.api]
+source = "api/target/wasm32-wasi/release/api.wasm"
+allowed_outbound_hosts = []
+ai_models = ["llama2-chat"]
+[component.api.build]
+command = "cargo build --target wasm32-wasi --release"
+workdir = "api"
+watch = ["src/**/*.rs", "Cargo.toml"]
