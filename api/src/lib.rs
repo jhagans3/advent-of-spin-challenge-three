@@ -2,7 +2,7 @@ use http::StatusCode;
 use serde::{Deserialize, Serialize};
 use spin_sdk::http::{IntoResponse, Params, Request, Router};
 use spin_sdk::http_component;
-use spin_sdk::llm::{infer, InferencingModel::Llama2Chat};
+use spin_sdk::llm::{infer_with_options, InferencingModel::Llama2Chat, InferencingParams};
 
 #[derive(Debug, Deserialize, Clone)]
 struct PromptRequest {
@@ -39,7 +39,18 @@ fn post_handler(req: Request, _params: Params) -> anyhow::Result<impl IntoRespon
     let prompt = format!(
         "Create a poem in {place} with characters {c} with things {o} in the style of Dr. Seuss"
     );
-    let inference_res = infer(Llama2Chat, &prompt)?;
+    let inference_res = infer_with_options(
+        Llama2Chat,
+        &prompt,
+        InferencingParams {
+            max_tokens: 500,
+            repeat_penalty: 1.1,
+            repeat_penalty_last_n_token_count: 64,
+            temperature: 0.8,
+            top_k: 40,
+            top_p: 0.9,
+        },
+    )?;
 
     let response_body = serde_json::to_string(&StoryResponse {
         story: inference_res.text,
